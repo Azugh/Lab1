@@ -17,6 +17,8 @@ class CanvasView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint()
+    private val lnPaint = Paint()
+    private val lgPaint = Paint()
 
     override fun onDraw(canvas: Canvas?) {
 
@@ -25,7 +27,7 @@ class CanvasView @JvmOverloads constructor(
         Log.i(TAG, "height = $height")
         Log.i(TAG, "width = $width")
 
-        val endY: Float = height - 100f
+        val endY: Float = height - 300f
         val endX: Float = width - 100f
         Log.i(TAG, "endy = $endY")
         Log.i(TAG, "endx = $endX")
@@ -34,10 +36,16 @@ class CanvasView @JvmOverloads constructor(
         paint.color = Color.BLACK
         paint.textSize = 20F
 
+        lnPaint.strokeWidth = 6f
+        lnPaint.color = Color.RED
+
+        lgPaint.strokeWidth = 6f
+        lgPaint.color = Color.GREEN
+
         canvas?.drawLine(100f, 100f, 100f, endY + 100f, paint)
 
         var y = endY
-        val partY: Float = (y - 200) / 10
+        val partY: Float = (y - 200f) / 10
         for (i in 1..10) {
 
             y -= partY
@@ -48,7 +56,7 @@ class CanvasView @JvmOverloads constructor(
         canvas?.drawLine(0f, endY, endX, endY, paint)
 
         var x = 100f
-        val partX: Float = (endX - 100f) / 10
+        val partX: Float = (endX - 150f) / 10
         for (i in 1..10) {
 
             x += partX
@@ -56,45 +64,28 @@ class CanvasView @JvmOverloads constructor(
             canvas?.drawText((i / 10f).toString(), x, endY + 35, paint)
         }
 
-        paint.color = Color.GREEN
-        paint.strokeWidth = 7F
+        var fx = 0f
 
-        var X = 0.1f
+        while (fx < 100) {
 
-        while (X < 1) {
+            val fxln = round(100f + partX * fx)
+            val fyln = (endY - partY * asin(1/(fx * fx)))
 
-            val fxln = round(100f + partX * X * 10)
-            val fyln = (endY - partY * ln(1 / X))
-            val fxrn = round(100f + partX * (X + 0.1f) * 10)
-            val fyrn = (endY - partY * ln(1 / (X + 0.1f)))
-//            canvas?.drawPoint(fxln, fyln, paint)
-            canvas?.drawLine(fxln, fyln, fxrn, fyrn, paint)
-//            X += 0.1f
-            X = ((X + 0.1f) * 100.0f).roundToInt() / 100.0f
+            val fxlg = round(100f + partX * fx)
+            val fylg = (endY - partY * sin(fx))
+
+            canvas?.drawPoint(fxlg, fylg, lgPaint)
+            canvas?.drawPoint(fxln, fyln, lnPaint)
+
+            fx += 0.001f
         }
 
-        X = 0.1f
-        paint.color = Color.RED
-        while (X < 1) {
-
-
-            val fxlg = round(100f + partX * X * 10)
-            val fylg = (endY - partY * log10(1 / X))
-            val fxrg = round(100f + partX * (X + 0.1f) * 10)
-            val fyrg = (endY - partY * log10(1 / (X + 0.1f)))
-//            canvas?.drawPoint(fxlg, fylg, paint)
-            canvas?.drawLine(fxlg, fylg, fxrg, fyrg, paint)
-//            Log.i(TAG, "fx = $fxlg")
-//            Log.i(TAG, "fy = $fylg")
-            Log.i(TAG, "X $X")
-            X = ((X + 0.1f) * 100.0f).roundToInt() / 100.0f
-        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         Log.i(TAG, "widthMeasureSpec - $widthMeasureSpec")
         Log.i(TAG, "heightMeasureSpec - $heightMeasureSpec")
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec + heightMeasureSpec % 500)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
 
